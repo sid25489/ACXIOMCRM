@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcxiomCRM", "AcxiomCRM\AcxiomCRM.csproj", "{4DF17E2E-F9D7-4771-8382-A1AC91DB798E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcxiomCRM.Tests", "AcxiomCRM.Tests\AcxiomCRM.Tests.csproj", "{82A16E93-4C51-4483-A913-92B62B37F6AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DF17E2E-F9D7-4771-8382-A1AC91DB798E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DF17E2E-F9D7-4771-8382-A1AC91DB798E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DF17E2E-F9D7-4771-8382-A1AC91DB798E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DF17E2E-F9D7-4771-8382-A1AC91DB798E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82A16E93-4C51-4483-A913-92B62B37F6AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82A16E93-4C51-4483-A913-92B62B37F6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82A16E93-4C51-4483-A913-92B62B37F6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82A16E93-4C51-4483-A913-92B62B37F6AD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

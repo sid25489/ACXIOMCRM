@@ -1,0 +1,143 @@
+@model Opportunity
+@{
+    ViewData["Title"] = $"Opportunity: {Model.OpportunityName}";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Opportunities</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.OpportunityName</li>
+    </ol>
+</nav>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="badge @(Model.Status == OpportunityStatus.Won ? "bg-success" : Model.Status == OpportunityStatus.Lost ? "bg-danger" : "bg-warning text-dark")">@Model.Status</span>
+                    <span class="badge bg-primary-subtle text-primary">Stage: @Model.Stage</span>
+                </div>
+                <h2 class="fw-bold text-dark mb-1">@Model.OpportunityName</h2>
+                <p class="text-muted mb-0">
+                    <i class="bi bi-buildings me-1"></i> Customer:
+                    <a asp-controller="Customers" asp-action="Details" asp-route-id="@Model.CustomerId" class="fw-medium text-decoration-none">
+                        @(Model.Customer?.CustomerName ?? "Customer Record")
+                    </a>
+                </p>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-action="Edit" asp-route-id="@Model.OpportunityId" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i> Edit</a>
+                <a asp-controller="FollowUps" asp-action="Create" asp-route-opportunityId="@Model.OpportunityId" class="btn btn-outline-success"><i class="bi bi-calendar-plus me-1"></i> Follow-Up</a>
+                <a asp-controller="Activities" asp-action="Create" asp-route-opportunityId="@Model.OpportunityId" class="btn btn-outline-secondary"><i class="bi bi-clock-history me-1"></i> Log Activity</a>
+            </div>
+        </div>
+
+        <!-- Stage Progression Bar & Actions -->
+        <div class="mt-4 p-3 bg-light rounded-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <span class="small fw-semibold text-secondary"><i class="bi bi-bezier2 me-1"></i>Stage Progression:</span>
+                <div class="d-flex flex-wrap gap-2">
+                    @if (Model.Status == OpportunityStatus.Open)
+                    {
+                        @if (Model.Stage != OpportunityStage.Qualification)
+                        {
+                            <form asp-action="ChangeStage" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="opportunityId" value="@Model.OpportunityId" />
+                                <input type="hidden" name="newStage" value="@OpportunityStage.Qualification" />
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Qualification</button>
+                            </form>
+                        }
+                        @if (Model.Stage != OpportunityStage.Proposal)
+                        {
+                            <form asp-action="ChangeStage" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="opportunityId" value="@Model.OpportunityId" />
+                                <input type="hidden" name="newStage" value="@OpportunityStage.Proposal" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Move to Proposal</button>
+                            </form>
+                        }
+                        @if (Model.Stage != OpportunityStage.Negotiation)
+                        {
+                            <form asp-action="ChangeStage" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="opportunityId" value="@Model.OpportunityId" />
+                                <input type="hidden" name="newStage" value="@OpportunityStage.Negotiation" />
+                                <button type="submit" class="btn btn-sm btn-outline-warning text-dark">Move to Negotiation</button>
+                            </form>
+                        }
+                        <form asp-action="ChangeStage" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="opportunityId" value="@Model.OpportunityId" />
+                            <input type="hidden" name="newStage" value="@OpportunityStage.Won" />
+                            <button type="submit" class="btn btn-sm btn-success fw-medium"><i class="bi bi-trophy me-1"></i> Mark Won</button>
+                        </form>
+                        <form asp-action="ChangeStage" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="opportunityId" value="@Model.OpportunityId" />
+                            <input type="hidden" name="newStage" value="@OpportunityStage.Lost" />
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-x-circle me-1"></i> Mark Lost</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Deal Closed (@Model.Status)</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="row g-4 text-secondary small">
+            <div class="col-6 col-md-3">
+                <span class="d-block text-muted text-uppercase" style="font-size: 0.75rem;">Total Deal Amount</span>
+                <strong class="text-success fs-4">₹@Model.Amount.ToString("N2")</strong>
+            </div>
+            <div class="col-6 col-md-3">
+                <span class="d-block text-muted text-uppercase" style="font-size: 0.75rem;">Win Probability</span>
+                <strong class="text-dark fs-4">@Model.Probability%</strong>
+            </div>
+            <div class="col-6 col-md-3">
+                <span class="d-block text-muted text-uppercase" style="font-size: 0.75rem;">Weighted Forecast</span>
+                <strong class="text-primary fs-4">₹@Model.WeightedPipelineValue.ToString("N2")</strong>
+            </div>
+            <div class="col-6 col-md-3">
+                <span class="d-block text-muted text-uppercase" style="font-size: 0.75rem;">Expected Close</span>
+                <strong class="text-dark fs-6">@Model.ExpectedCloseDate.ToString("dd MMM yyyy")</strong>
+            </div>
+            <div class="col-6 col-md-3">
+                <span class="d-block text-muted text-uppercase" style="font-size: 0.75rem;">Assigned User</span>
+                <strong class="text-dark fs-6">@(Model.AssignedUser?.FullName ?? Model.AssignedUser?.UserName ?? "Unassigned")</strong>
+            </div>
+            <div class="col-6 col-md-3">
+                <span class="d-block text-muted text-uppercase" style="font-size: 0.75rem;">Source Lead</span>
+                @if (Model.LeadId.HasValue && Model.Lead != null)
+                {
+                    <a asp-controller="Leads" asp-action="Details" asp-route-id="@Model.LeadId" class="text-decoration-none">
+                        @Model.Lead.LeadName (@Model.Lead.LeadCode)
+                    </a>
+                }
+                else
+                {
+                    <span class="text-muted">-</span>
+                }
+            </div>
+            <div class="col-12 col-md-6">
+                <span class="d-block text-muted text-uppercase" style="font-size: 0.75rem;">Timestamps</span>
+                <span class="text-muted">Created: @Model.CreatedDate.ToString("dd MMM yyyy, HH:mm") by @Model.CreatedBy | Modified: @(Model.ModifiedDate?.ToString("dd MMM yyyy, HH:mm") ?? "-")</span>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Notes))
+        {
+            <div class="mt-4 p-3 bg-light rounded-3">
+                <span class="fw-semibold text-secondary d-block mb-1 small"><i class="bi bi-sticky me-1"></i>Opportunity Notes:</span>
+                <p class="mb-0 text-dark small">@Model.Notes</p>
+            </div>
+        }
+    </div>
+</div>

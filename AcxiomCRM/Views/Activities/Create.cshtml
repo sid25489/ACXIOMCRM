@@ -1,0 +1,99 @@
+@model Activity
+@{
+    ViewData["Title"] = "Log Activity";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Activities</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Log Activity</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-clock-history text-secondary me-2"></i>Log Customer / Lead Interaction</h5>
+                <span class="text-danger small fw-medium">* Required Fields</span>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post" id="activityForm">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <label asp-for="Subject" class="form-label fw-medium small">Subject <span class="text-danger">*</span></label>
+                            <input asp-for="Subject" class="form-control" placeholder="e.g. Discussed pricing proposal, answered technical queries" maxlength="200" required />
+                            <span asp-validation-for="Subject" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="ActivityType" class="form-label fw-medium small">Interaction Type</label>
+                            <select asp-for="ActivityType" class="form-select" asp-items="Html.GetEnumSelectList<ActivityType>()"></select>
+                            <span asp-validation-for="ActivityType" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="ActivityDate" class="form-label fw-medium small">Date & Time <span class="text-danger">*</span></label>
+                            <input asp-for="ActivityDate" type="datetime-local" class="form-control" required />
+                            <span asp-validation-for="ActivityDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label fw-medium small">Status</label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<ActivityStatus>()"></select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 mb-3">
+                        <span class="small fw-semibold text-secondary d-block mb-2">Associate with Record (Choose at least one):</span>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label asp-for="CustomerId" class="form-label small">Customer</label>
+                                <select asp-for="CustomerId" class="form-select form-select-sm" asp-items="ViewBag.Customers">
+                                    <option value="">-- None --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="LeadId" class="form-label small">Lead</label>
+                                <select asp-for="LeadId" class="form-select form-select-sm" asp-items="ViewBag.Leads">
+                                    <option value="">-- None --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="OpportunityId" class="form-label small">Opportunity</label>
+                                <select asp-for="OpportunityId" class="form-select form-select-sm" asp-items="ViewBag.Opportunities">
+                                    <option value="">-- None --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label fw-medium small">Activity Summary & Transcript</label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Key outcomes, client questions, agreements reached..." maxlength="2000"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-save me-1"></i> Log Activity
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

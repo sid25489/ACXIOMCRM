@@ -1,0 +1,116 @@
+@{
+    ViewData["Title"] = "CRM Reports Center";
+}
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1"><i class="bi bi-bar-chart-line text-primary me-2"></i>Enterprise Reporting Center</h2>
+    <p class="text-muted small">Generate real-time business intelligence, audit logs, conversion rates, and CSV exports</p>
+</div>
+
+<div class="row g-4">
+    <!-- 1. Customer Report -->
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm p-4 hover-lift">
+            <div class="badge bg-primary-subtle text-primary p-3 rounded-circle mb-3 align-self-start"><i class="bi bi-buildings fs-4"></i></div>
+            <h5 class="fw-bold text-dark">Customer Master Report</h5>
+            <p class="text-muted small flex-grow-1">Detailed list of customer accounts, contact parameters, account owners, and lifecycle status.</p>
+            <div class="d-flex gap-2">
+                <a asp-action="Customers" class="btn btn-outline-primary btn-sm flex-grow-1"><i class="bi bi-eye me-1"></i> View Report</a>
+                <a asp-action="ExportCustomersCsv" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> CSV</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Lead Report -->
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm p-4 hover-lift">
+            <div class="badge bg-info-subtle text-info p-3 rounded-circle mb-3 align-self-start"><i class="bi bi-funnel fs-4"></i></div>
+            <h5 class="fw-bold text-dark">Lead Pipeline Report</h5>
+            <p class="text-muted small flex-grow-1">Inbound and outbound leads grouped by source channel, priority, status, and expected financial value.</p>
+            <div class="d-flex gap-2">
+                <a asp-action="Leads" class="btn btn-outline-info text-dark btn-sm flex-grow-1"><i class="bi bi-eye me-1"></i> View Report</a>
+                <a asp-action="ExportLeadsCsv" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> CSV</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Opportunity Report -->
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm p-4 hover-lift">
+            <div class="badge bg-warning-subtle text-warning p-3 rounded-circle mb-3 align-self-start"><i class="bi bi-briefcase fs-4"></i></div>
+            <h5 class="fw-bold text-dark">Opportunity Pipeline Report</h5>
+            <p class="text-muted small flex-grow-1">Active and historical deals with stage probabilities, weighted values, and expected close dates.</p>
+            <div class="d-flex gap-2">
+                <a asp-action="Opportunities" class="btn btn-outline-warning text-dark btn-sm flex-grow-1"><i class="bi bi-eye me-1"></i> View Report</a>
+                <a asp-action="ExportOpportunitiesCsv" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> CSV</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Follow-Up Report -->
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm p-4 hover-lift">
+            <div class="badge bg-success-subtle text-success p-3 rounded-circle mb-3 align-self-start"><i class="bi bi-calendar-check fs-4"></i></div>
+            <h5 class="fw-bold text-dark">Follow-Up & Engagement Report</h5>
+            <p class="text-muted small flex-grow-1">Overview of scheduled, completed, missed, and overdue client touchpoints and executive agendas.</p>
+            <div class="d-flex gap-2">
+                <a asp-action="FollowUps" class="btn btn-outline-success btn-sm flex-grow-1"><i class="bi bi-eye me-1"></i> View Report</a>
+                <a asp-action="ExportFollowUpsCsv" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> CSV</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Sales Pipeline Matrix -->
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm p-4 hover-lift">
+            <div class="badge bg-indigo-subtle text-primary p-3 rounded-circle mb-3 align-self-start"><i class="bi bi-bar-chart-steps fs-4"></i></div>
+            <h5 class="fw-bold text-dark">Sales Pipeline Matrix</h5>
+            <p class="text-muted small flex-grow-1">Aggregated breakdown of deal counts, unweighted pipeline values, and weighted probabilities by stage.</p>
+            <div>
+                <a asp-action="Pipeline" class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-table me-1"></i> View Stage Matrix</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Lead Conversion Report -->
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm p-4 hover-lift">
+            <div class="badge bg-purple-subtle text-secondary p-3 rounded-circle mb-3 align-self-start"><i class="bi bi-arrow-repeat fs-4"></i></div>
+            <h5 class="fw-bold text-dark">Lead Conversion Analytics</h5>
+            <p class="text-muted small flex-grow-1">Conversion rates, win-loss ratios, and total converted opportunity revenue created from prospects.</p>
+            <div>
+                <a asp-action="Conversions" class="btn btn-outline-secondary btn-sm w-100"><i class="bi bi-pie-chart me-1"></i> View Conversion Metrics</a>
+            </div>
+        </div>
+    </div>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <!-- 7. User Activity Report -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm p-4 hover-lift">
+                <div class="badge bg-secondary-subtle text-dark p-3 rounded-circle mb-3 align-self-start"><i class="bi bi-people fs-4"></i></div>
+                <h5 class="fw-bold text-dark">Executive Activity Report</h5>
+                <p class="text-muted small flex-grow-1">Operational audit of records created, deals worked, follow-ups logged, and activities completed by user.</p>
+                <div>
+                    <a asp-action="UserActivity" class="btn btn-outline-dark btn-sm w-100"><i class="bi bi-graph-up me-1"></i> View Performance</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (User.IsInRole("Admin"))
+    {
+        <!-- 8. Audit Trail Report -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm p-4 hover-lift">
+                <div class="badge bg-danger-subtle text-danger p-3 rounded-circle mb-3 align-self-start"><i class="bi bi-shield-check fs-4"></i></div>
+                <h5 class="fw-bold text-dark">System Security & Audit Report</h5>
+                <p class="text-muted small flex-grow-1">Administrative log of authentication events, user lockout changes, and record mutations with IP stamps.</p>
+                <div>
+                    <a asp-action="Audit" class="btn btn-outline-danger btn-sm w-100"><i class="bi bi-journal-check me-1"></i> View Audit Trail</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

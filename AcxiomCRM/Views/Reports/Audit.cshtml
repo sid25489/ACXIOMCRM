@@ -1,0 +1,55 @@
+@model IEnumerable<AuditLog>
+@{
+    ViewData["Title"] = "Audit Report";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Audit Report</li>
+    </ol>
+</nav>
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1"><i class="bi bi-shield-check text-danger me-2"></i>Security & Audit Trail Report</h2>
+    <p class="text-muted small">Append-only audit trail verifying authentication events, security modifications, and CRUD actions</p>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 font-monospace small">
+            <thead class="font-sans-serif">
+                <tr>
+                    <th>Timestamp (UTC)</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Record ID</th>
+                    <th>Result</th>
+                    <th>IP Address</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@a.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@(a.User?.FullName ?? a.User?.UserName ?? "System / Anonymous")</td>
+                        <td><span class="badge @(a.Action == "Delete" || a.Action == "FailedLogin" ? "bg-danger" : "bg-primary-subtle text-primary")">@a.Action</span></td>
+                        <td>@a.EntityName</td>
+                        <td>@(a.RecordId ?? "-")</td>
+                        <td><span class="badge @(a.Result == "Success" ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger")">@a.Result</span></td>
+                        <td>@(a.IpAddress ?? "127.0.0.1")</td>
+                        <td>
+                            <span class="text-truncate d-inline-block" style="max-width: 320px;" title="@a.Details">
+                                @(a.Details ?? a.NewValue ?? "-")
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

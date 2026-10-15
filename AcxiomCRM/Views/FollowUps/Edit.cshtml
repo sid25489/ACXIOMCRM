@@ -1,0 +1,79 @@
+@model FollowUp
+@{
+    ViewData["Title"] = $"Edit Follow-Up: {Model.Subject}";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Follow-Ups</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-pencil-square text-success me-2"></i>Edit Follow-Up</h5>
+                <span class="badge @(Model.Status == FollowUpStatus.Completed ? "bg-success" : Model.Status == FollowUpStatus.Cancelled ? "bg-secondary" : "bg-warning text-dark")">@Model.Status</span>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Edit" asp-route-id="@Model.FollowUpId" method="post" id="followUpEditForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="FollowUpId" />
+                    <input type="hidden" asp-for="CustomerId" />
+                    <input type="hidden" asp-for="LeadId" />
+                    <input type="hidden" asp-for="OpportunityId" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <label asp-for="Subject" class="form-label fw-medium small">Subject / Purpose <span class="text-danger">*</span></label>
+                            <input asp-for="Subject" class="form-control" maxlength="200" required />
+                            <span asp-validation-for="Subject" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="FollowUpType" class="form-label fw-medium small">Type</label>
+                            <select asp-for="FollowUpType" class="form-select" asp-items="Html.GetEnumSelectList<FollowUpType>()"></select>
+                            <span asp-validation-for="FollowUpType" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FollowUpDate" class="form-label fw-medium small">Date & Time <span class="text-danger">*</span></label>
+                            <input asp-for="FollowUpDate" type="datetime-local" class="form-control" required />
+                            <span asp-validation-for="FollowUpDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label fw-medium small">Status</label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<FollowUpStatus>()"></select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Remarks" class="form-label fw-medium small">Remarks</label>
+                        <textarea asp-for="Remarks" class="form-control" rows="3" maxlength="2000"></textarea>
+                        <span asp-validation-for="Remarks" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-save me-1"></i> Update Follow-Up
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

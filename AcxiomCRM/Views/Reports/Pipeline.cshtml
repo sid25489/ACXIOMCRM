@@ -1,0 +1,59 @@
+@model IEnumerable<PipelineReportItem>
+@{
+    ViewData["Title"] = "Sales Pipeline Matrix";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Pipeline Matrix</li>
+    </ol>
+</nav>
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1"><i class="bi bi-bar-chart-steps text-primary me-2"></i>Sales Pipeline Matrix</h2>
+    <p class="text-muted small">Stage-by-stage distribution of active sales pipeline volume and weighted probability</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Pipeline Stage</th>
+                            <th>Active Deal Count</th>
+                            <th>Total Nominal Amount</th>
+                            <th>Weighted Probability Amount</th>
+                            <th>Avg. Deal Size</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var avg = item.Count > 0 ? item.TotalAmount / item.Count : 0m;
+                            <tr>
+                                <td class="fw-bold"><span class="badge bg-primary-subtle text-primary p-2">@item.Stage</span></td>
+                                <td><span class="badge bg-light text-dark border">@item.Count Deals</span></td>
+                                <td class="fw-bold text-dark">₹@item.TotalAmount.ToString("N2")</td>
+                                <td class="fw-bold text-success">₹@item.WeightedAmount.ToString("N2")</td>
+                                <td class="text-muted">₹@avg.ToString("N2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light fw-bold">
+                        <tr>
+                            <td>Total Portfolio</td>
+                            <td>@Model.Sum(x => x.Count) Deals</td>
+                            <td>₹@Model.Sum(x => x.TotalAmount).ToString("N2")</td>
+                            <td class="text-success">₹@Model.Sum(x => x.WeightedAmount).ToString("N2")</td>
+                            <td>-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

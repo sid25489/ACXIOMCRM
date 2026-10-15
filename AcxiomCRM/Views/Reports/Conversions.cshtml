@@ -1,0 +1,52 @@
+@model ConversionReportDto
+@{
+    ViewData["Title"] = "Lead Conversion Report";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Conversion Analytics</li>
+    </ol>
+</nav>
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1"><i class="bi bi-arrow-repeat text-success me-2"></i>Lead Conversion Analytics</h2>
+    <p class="text-muted small">Tracking conversion efficiency from prospect acquisition to active customer accounts</p>
+</div>
+
+<!-- Conversion Metric Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm p-3">
+            <span class="text-muted small fw-semibold text-uppercase">Total Leads Captured</span>
+            <h3 class="fw-bold mt-1 text-dark mb-0">@Model.TotalLeads</h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-success-subtle border-start border-4 border-success">
+            <span class="text-success small fw-semibold text-uppercase">Successfully Converted</span>
+            <h3 class="fw-bold mt-1 text-success mb-0">@Model.ConvertedLeads</h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-danger-subtle border-start border-4 border-danger">
+            <span class="text-danger small fw-semibold text-uppercase">Lost Prospects</span>
+            <h3 class="fw-bold mt-1 text-danger mb-0">@Model.LostLeads</h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-primary text-white">
+            <span class="text-white-50 small fw-semibold text-uppercase">Conversion Rate</span>
+            <h3 class="fw-bold mt-1 text-white mb-0">@Model.ConversionRatePercent%</h3>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm p-4">
+    <h5 class="fw-bold mb-3">Converted Revenue Impact</h5>
+    <p class="text-muted small mb-4">Total opportunity deal value initiated directly from qualified lead conversions.</p>
+    <div class="display-6 fw-bold text-success mb-2">₹@Model.TotalConvertedPipeline.ToString("N2")</div>
+    <span class="badge bg-light text-muted border align-self-start">Verified Database Pipeline</span>
+</div>

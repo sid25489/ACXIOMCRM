@@ -1,0 +1,91 @@
+@model IEnumerable<Opportunity>
+@{
+    ViewData["Title"] = "Opportunity Report";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Opportunity Report</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="bi bi-briefcase text-warning me-2"></i>Opportunity & Revenue Report</h2>
+        <p class="text-muted mb-0 small">Stage-wise deal progression, amounts, probability distributions, and forecast</p>
+    </div>
+    <div>
+        <a asp-action="ExportOpportunitiesCsv" asp-route-stage="@ViewBag.Stage" asp-route-status="@ViewBag.Status" asp-route-fromDate="@ViewBag.FromDate" asp-route-toDate="@ViewBag.ToDate" class="btn btn-outline-success shadow-sm">
+            <i class="bi bi-file-earmark-arrow-down me-1"></i> Export to CSV
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-6 col-md-3">
+                <select name="stage" class="form-select form-select-sm" asp-items="Html.GetEnumSelectList<OpportunityStage>()">
+                    <option value="">All Stages</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <select name="status" class="form-select form-select-sm" asp-items="Html.GetEnumSelectList<OpportunityStatus>()">
+                    <option value="">All Statuses</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <input type="date" name="fromDate" class="form-control form-control-sm" value="@(ViewBag.FromDate?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-6 col-md-2">
+                <input type="date" name="toDate" class="form-control form-control-sm" value="@(ViewBag.ToDate?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm flex-grow-1"><i class="bi bi-funnel"></i></button>
+                <a asp-action="Opportunities" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-counterclockwise"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 small">
+            <thead>
+                <tr>
+                    <th>Opportunity Name</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                    <th>Stage</th>
+                    <th>Probability</th>
+                    <th>Weighted Value</th>
+                    <th>Expected Close</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@o.OpportunityName</td>
+                        <td>@(o.Customer?.CustomerName ?? "-")</td>
+                        <td class="fw-bold">₹@o.Amount.ToString("N2")</td>
+                        <td><span class="badge bg-primary-subtle text-primary">@o.Stage</span></td>
+                        <td>@o.Probability%</td>
+                        <td class="text-muted">₹@o.WeightedPipelineValue.ToString("N2")</td>
+                        <td>@o.ExpectedCloseDate.ToString("dd MMM yyyy")</td>
+                        <td>
+                            <span class="badge @(o.Status == OpportunityStatus.Won ? "bg-success" : o.Status == OpportunityStatus.Lost ? "bg-danger" : "bg-warning text-dark")">
+                                @o.Status
+                            </span>
+                        </td>
+                        <td>@(o.AssignedUser?.FullName ?? o.AssignedUser?.UserName ?? "Unassigned")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

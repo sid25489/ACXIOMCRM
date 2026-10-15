@@ -1,0 +1,120 @@
+@model Customer
+@{
+    ViewData["Title"] = $"Edit {Model.CustomerName}";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Customers</a></li>
+        <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.CustomerId">@Model.CustomerCode</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-pencil-square text-primary me-2"></i>Edit Customer: @Model.CustomerName</h5>
+                <span class="badge bg-light text-dark border">@Model.CustomerCode</span>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Edit" asp-route-id="@Model.CustomerId" method="post" id="customerEditForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="CustomerId" />
+                    <input type="hidden" asp-for="CustomerCode" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="CustomerName" class="form-label fw-medium small">Customer / Contact Name <span class="text-danger">*</span></label>
+                            <input asp-for="CustomerName" class="form-control" maxlength="150" required />
+                            <span asp-validation-for="CustomerName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CompanyName" class="form-label fw-medium small">Company Name</label>
+                            <input asp-for="CompanyName" class="form-control" maxlength="150" />
+                            <span asp-validation-for="CompanyName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-medium small">Email Address <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" type="email" class="form-control" maxlength="150" required />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label fw-medium small">Mobile Number <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Phone" class="form-control" pattern="^[6-9]\d{9}$" maxlength="20" required title="Enter a valid 10-digit Indian mobile number." />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label fw-medium small">Street Address</label>
+                            <input asp-for="Address" class="form-control" maxlength="300" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="City" class="form-label fw-medium small">City</label>
+                            <input asp-for="City" class="form-control" maxlength="100" />
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="State" class="form-label fw-medium small">State</label>
+                            <input asp-for="State" class="form-control" maxlength="100" />
+                            <span asp-validation-for="State" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Status" class="form-label fw-medium small">Status</label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<CustomerStatus>()"></select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    @if (ViewBag.Owners != null)
+                    {
+                        <div class="mb-3">
+                            <label asp-for="OwnerId" class="form-label fw-medium small">Reassign Account Owner</label>
+                            <select asp-for="OwnerId" class="form-select" asp-items="ViewBag.Owners"></select>
+                        </div>
+                    }
+
+                    <div class="mb-4">
+                        <label asp-for="Notes" class="form-label fw-medium small">Internal Notes & History</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" maxlength="2000"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Details" asp-route-id="@Model.CustomerId" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-save me-1"></i> Update Customer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

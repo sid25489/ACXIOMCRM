@@ -1,0 +1,151 @@
+@model IEnumerable<UserDto>
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="bi bi-people text-danger me-2"></i>User & Role Administration</h2>
+        <p class="text-muted mb-0 small">Admin-only interface for managing users, roles, account activation, and lockouts</p>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary shadow-sm"><i class="bi bi-person-plus me-1"></i> Create User</a>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-12 col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Search by name, email, department..." value="@ViewBag.Search" />
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <select name="role" class="form-select" asp-items="ViewBag.Roles">
+                    <option value="">All Roles</option>
+                </select>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <select name="isActive" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="true" selected="@(ViewBag.IsActive == true)">Active</option>
+                    <option value="false" selected="@(ViewBag.IsActive == false)">Deactivated</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1"><i class="bi bi-funnel me-1"></i> Filter</button>
+                <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Email Address</th>
+                    <th>Department</th>
+                    <th>Role</th>
+                    <th>Account Status</th>
+                    <th>Lockout</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@user.FullName</td>
+                        <td>@user.Email</td>
+                        <td class="small text-muted">@(user.Department ?? "-")</td>
+                        <td>
+                            <span class="badge @(user.Role == "Admin" ? "bg-danger" : user.Role == "Manager" ? "bg-warning text-dark" : "bg-info text-dark")">
+                                @user.Role
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge @(user.IsActive ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger")">
+                                @(user.IsActive ? "Active" : "Deactivated")
+                            </span>
+                        </td>
+                        <td>
+                            @if (user.IsLockedOut)
+                            {
+                                <span class="badge bg-danger"><i class="bi bi-lock me-1"></i>Locked</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-light text-muted border">Normal</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-outline-primary me-1" title="Edit User"><i class="bi bi-pencil"></i></a>
+
+                            <!-- Toggle Status Form -->
+                            <form asp-action="ToggleStatus" asp-route-id="@user.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-outline-danger" : "btn-outline-success") me-1" title="@(user.IsActive ? "Deactivate" : "Activate")">
+                                    <i class="bi @(user.IsActive ? "bi-person-slash" : "bi-person-check")"></i>
+                                </button>
+                            </form>
+
+                            @if (user.IsLockedOut)
+                            {
+                                <form asp-action="Unlock" asp-route-id="@user.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-warning text-dark me-1" title="Unlock Account">
+                                        <i class="bi bi-unlock"></i>
+                                    </button>
+                                </form>
+                            }
+
+                            <!-- Reset Password Trigger -->
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#resetPwdModal-@user.Id" title="Reset Password">
+                                <i class="bi bi-key"></i>
+                            </button>
+
+                            <!-- Reset Password Modal -->
+                            <div class="modal fade text-start" id="resetPwdModal-@user.Id" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form asp-action="ResetPassword" asp-route-id="@user.Id" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <div class="modal-header">
+                                                <h5 class="modal-title fw-bold"><i class="bi bi-key me-2 text-primary"></i>Reset Password: @user.Email</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-medium">New Password <span class="text-danger">*</span></label>
+                                                    <input type="password" name="newPassword" class="form-control" placeholder="Min 8 characters" required />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-medium">Confirm Password <span class="text-danger">*</span></label>
+                                                    <input type="password" name="confirmPassword" class="form-control" placeholder="Repeat password" required />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary btn-sm px-3">Update Password</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

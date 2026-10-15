@@ -1,0 +1,87 @@
+@model IEnumerable<Lead>
+@{
+    ViewData["Title"] = "Lead Report";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Lead Report</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="bi bi-funnel text-info me-2"></i>Lead Pipeline Report</h2>
+        <p class="text-muted mb-0 small">Lead generation, source performance, conversion details, and expected pipeline values</p>
+    </div>
+    <div>
+        <a asp-action="ExportLeadsCsv" asp-route-status="@ViewBag.Status" asp-route-source="@ViewBag.Source" asp-route-fromDate="@ViewBag.FromDate" asp-route-toDate="@ViewBag.ToDate" class="btn btn-outline-success shadow-sm">
+            <i class="bi bi-file-earmark-arrow-down me-1"></i> Export to CSV
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-6 col-md-3">
+                <select name="status" class="form-select form-select-sm" asp-items="Html.GetEnumSelectList<LeadStatus>()">
+                    <option value="">All Statuses</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <select name="source" class="form-select form-select-sm" asp-items="Html.GetEnumSelectList<LeadSource>()">
+                    <option value="">All Sources</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <input type="date" name="fromDate" class="form-control form-control-sm" value="@(ViewBag.FromDate?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-6 col-md-2">
+                <input type="date" name="toDate" class="form-control form-control-sm" value="@(ViewBag.ToDate?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm flex-grow-1"><i class="bi bi-funnel"></i></button>
+                <a asp-action="Leads" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-counterclockwise"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 small">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Lead Name</th>
+                    <th>Company</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Expected Value</th>
+                    <th>Assigned To</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var l in Model)
+                {
+                    <tr>
+                        <td><span class="badge bg-light text-dark border">@l.LeadCode</span></td>
+                        <td class="fw-semibold">@l.LeadName</td>
+                        <td>@(l.CompanyName ?? "-")</td>
+                        <td>@l.Source</td>
+                        <td><span class="badge bg-primary-subtle text-primary">@l.Status</span></td>
+                        <td>@l.Priority</td>
+                        <td class="fw-bold">₹@l.ExpectedValue.ToString("N2")</td>
+                        <td>@(l.AssignedUser?.FullName ?? l.AssignedUser?.UserName ?? "Unassigned")</td>
+                        <td>@l.CreatedDate.ToString("dd MMM yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,111 @@
+@model Lead
+@{
+    ViewData["Title"] = "Capture Lead";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Leads</a></li>
+        <li class="breadcrumb-item active" aria-current="page">New Lead</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-funnel text-info me-2"></i>Capture New Lead</h5>
+                <span class="text-danger small fw-medium">* Required Fields</span>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post" id="leadForm">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="LeadName" class="form-label fw-medium small">Lead / Contact Name <span class="text-danger">*</span></label>
+                            <input asp-for="LeadName" class="form-control" placeholder="e.g. Acme Tech Lead" maxlength="150" required />
+                            <span asp-validation-for="LeadName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CompanyName" class="form-label fw-medium small">Company Name</label>
+                            <input asp-for="CompanyName" class="form-control" placeholder="e.g. Acme Enterprise" maxlength="150" />
+                            <span asp-validation-for="CompanyName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-medium small">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="prospect@company.com" maxlength="150" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label fw-medium small">Mobile Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Phone" class="form-control" placeholder="10-digit mobile (e.g. 9876543210)" pattern="^[6-9]\d{9}$" maxlength="20" title="10-digit Indian mobile number." />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="Source" class="form-label fw-medium small">Lead Source</label>
+                            <select asp-for="Source" class="form-select" asp-items="Html.GetEnumSelectList<LeadSource>()"></select>
+                            <span asp-validation-for="Source" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Priority" class="form-label fw-medium small">Priority</label>
+                            <select asp-for="Priority" class="form-select" asp-items="Html.GetEnumSelectList<LeadPriority>()"></select>
+                            <span asp-validation-for="Priority" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="ExpectedValue" class="form-label fw-medium small">Expected Value (₹)</label>
+                            <input asp-for="ExpectedValue" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" />
+                            <span asp-validation-for="ExpectedValue" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    @if (ViewBag.Users != null)
+                    {
+                        <div class="mb-3">
+                            <label asp-for="AssignedTo" class="form-label fw-medium small">Assign To Executive</label>
+                            <select asp-for="AssignedTo" class="form-select" asp-items="ViewBag.Users">
+                                <option value="">-- Assign to Me --</option>
+                            </select>
+                        </div>
+                    }
+
+                    <div class="mb-4">
+                        <label asp-for="Notes" class="form-label fw-medium small">Lead Notes & Context</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Context about how this lead was acquired and what they require..." maxlength="2000"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-info text-dark px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-check2-circle me-1"></i> Capture Lead
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

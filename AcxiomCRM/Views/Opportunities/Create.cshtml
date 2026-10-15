@@ -1,0 +1,116 @@
+@model Opportunity
+@{
+    ViewData["Title"] = "New Opportunity";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Opportunities</a></li>
+        <li class="breadcrumb-item active" aria-current="page">New Opportunity</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-briefcase text-warning me-2"></i>Create Sales Opportunity</h5>
+                <span class="text-danger small fw-medium">* Required Fields</span>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post" id="oppForm">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-12">
+                            <label asp-for="OpportunityName" class="form-label fw-medium small">Deal / Opportunity Name <span class="text-danger">*</span></label>
+                            <input asp-for="OpportunityName" class="form-control" placeholder="e.g. Cloud Infrastructure Renewal" maxlength="150" required />
+                            <span asp-validation-for="OpportunityName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="CustomerId" class="form-label fw-medium small">Customer Account <span class="text-danger">*</span></label>
+                            <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.Customers" required>
+                                <option value="">-- Select Customer --</option>
+                            </select>
+                            <span asp-validation-for="CustomerId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="LeadId" class="form-label fw-medium small">Originating Lead (Optional)</label>
+                            <select asp-for="LeadId" class="form-select" asp-items="ViewBag.Leads">
+                                <option value="">-- No Source Lead --</option>
+                            </select>
+                            <span asp-validation-for="LeadId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Amount" class="form-label fw-medium small">Deal Amount (₹) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted">₹</span>
+                                <input asp-for="Amount" type="number" step="0.01" min="0.01" class="form-control" placeholder="0.00" required />
+                            </div>
+                            <small class="text-muted" style="font-size: 0.75rem;">Amount must be strictly greater than 0</small>
+                            <span asp-validation-for="Amount" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Probability" class="form-label fw-medium small">Win Probability (%) <span class="text-danger">*</span></label>
+                            <input asp-for="Probability" type="number" min="0" max="100" class="form-control" placeholder="0 - 100" required />
+                            <span asp-validation-for="Probability" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Stage" class="form-label fw-medium small">Pipeline Stage</label>
+                            <select asp-for="Stage" class="form-select" asp-items="Html.GetEnumSelectList<OpportunityStage>()"></select>
+                            <span asp-validation-for="Stage" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ExpectedCloseDate" class="form-label fw-medium small">Expected Close Date <span class="text-danger">*</span></label>
+                            <input asp-for="ExpectedCloseDate" type="date" class="form-control" min="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required />
+                            <small class="text-muted" style="font-size: 0.75rem;">Cannot be in the past for active opportunities</small>
+                            <span asp-validation-for="ExpectedCloseDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    @if (ViewBag.Users != null)
+                    {
+                        <div class="mb-3">
+                            <label asp-for="AssignedTo" class="form-label fw-medium small">Deal Owner</label>
+                            <select asp-for="AssignedTo" class="form-select" asp-items="ViewBag.Users">
+                                <option value="">-- Assign to Me --</option>
+                            </select>
+                        </div>
+                    }
+
+                    <div class="mb-4">
+                        <label asp-for="Notes" class="form-label fw-medium small">Deal Strategy & Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Key decision makers, scope, competitive landscape..." maxlength="2000"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-warning text-dark px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-check2-circle me-1"></i> Create Opportunity
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

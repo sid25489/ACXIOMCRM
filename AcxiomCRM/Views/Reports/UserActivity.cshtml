@@ -1,0 +1,55 @@
+@model IEnumerable<UserActivityReportItem>
+@{
+    ViewData["Title"] = "User Activity Report";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Executive Activity</li>
+    </ol>
+</nav>
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1"><i class="bi bi-people text-secondary me-2"></i>Executive Activity Report</h2>
+    <p class="text-muted small">Operational team productivity, assigned record volumes, and historical audit entries</p>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Executive Name</th>
+                    <th>Role</th>
+                    <th>Assigned Customers</th>
+                    <th>Active Leads</th>
+                    <th>Opportunities</th>
+                    <th>Follow-Ups</th>
+                    <th>Activities</th>
+                    <th>Total Audit Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@u.UserName</td>
+                        <td>
+                            <span class="badge @(u.Role == "Admin" ? "bg-danger" : u.Role == "Manager" ? "bg-warning text-dark" : "bg-info text-dark")">
+                                @u.Role
+                            </span>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">@u.CustomersCount</span></td>
+                        <td><span class="badge bg-light text-dark border">@u.LeadsCount</span></td>
+                        <td><span class="badge bg-light text-dark border">@u.OpportunitiesCount</span></td>
+                        <td><span class="badge bg-light text-dark border">@u.FollowUpsCount</span></td>
+                        <td><span class="badge bg-light text-dark border">@u.ActivitiesCount</span></td>
+                        <td class="fw-bold text-primary">@u.AuditActionsCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
